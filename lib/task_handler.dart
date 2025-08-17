@@ -1,4 +1,5 @@
 import 'flutter_foreground_task.dart';
+import 'flutter_foreground_task.dart';
 
 /// A class that implements a task handler.
 abstract class TaskHandler {

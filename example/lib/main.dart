@@ -177,7 +177,9 @@ class _ExamplePageState extends State<ExamplePage> {
         notificationText: 'Tap to return to the app',
         notificationIcon: null,
         notificationButtons: [
-          const NotificationButton(id: 'btn_hello', text: 'hello'),
+          NotificationButton(id: 'prev', text: 'prev', icon: "ic_prev"),
+          NotificationButton(id: 'play', text: 'play', icon: "ic_play"),
+          NotificationButton(id: 'next', text: 'next', icon: "ic_next"),
         ],
         notificationInitialRoute: '/second',
         callback: startCallback,

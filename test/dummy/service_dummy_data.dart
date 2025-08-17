@@ -50,9 +50,9 @@ class ServiceDummyData {
 
   final List<NotificationButton> notificationButtons = [
     const NotificationButton(
-        id: 'id_test1', text: 'test1', textColor: Colors.purple),
+        id: 'id_test1', text: 'test1', textColor: Colors.purple, icon:"test1"),
     const NotificationButton(
-        id: 'id_test2', text: 'test2', textColor: Colors.green),
+        id: 'id_test2', text: 'test2', textColor: Colors.green, icon:"test2"),
   ];
 
   Map<String, dynamic> getStartServiceArgs(Platform platform) {

@@ -6,11 +6,13 @@ import java.util.Objects
 data class NotificationButton(
     val id: String,
     val text: String,
+    val icon: String,
     val textColorRgb: String?
 ) {
     companion object {
         private const val ID_KEY = "id"
         private const val TEXT_KEY = "text"
+        private const val ICON_KEY = "icon"
         private const val TEXT_COLOR_RGB_KEY = "textColorRgb"
 
         fun fromJSONObject(jsonObj: JSONObject): NotificationButton {
@@ -26,13 +28,19 @@ data class NotificationButton(
                 jsonObj.getString(TEXT_KEY)
             }
 
+            val icon: String = if (jsonObj.isNull(ICON_KEY)) {
+                ""
+            } else {
+                jsonObj.getString(ICON_KEY)
+            }
+
             val textColorRgb: String? = if (jsonObj.isNull(TEXT_COLOR_RGB_KEY)) {
                 null
             } else {
                 jsonObj.getString(TEXT_COLOR_RGB_KEY)
             }
 
-            return NotificationButton(id = id, text = text, textColorRgb = textColorRgb)
+            return NotificationButton(id = id, text = text, icon = icon, textColorRgb = textColorRgb)
         }
     }
 
@@ -40,10 +48,10 @@ data class NotificationButton(
         if (other == null || other !is NotificationButton) {
             return false
         }
-        return this.id == other.id && this.text == other.text && this.textColorRgb == other.textColorRgb
+        return this.id == other.id && this.text == other.text && this.icon == other.icon && this.textColorRgb == other.textColorRgb
     }
 
     override fun hashCode(): Int {
-        return Objects.hash(id, text, textColorRgb)
+        return Objects.hash(id, text, icon, textColorRgb)
     }
 }

@@ -8,15 +8,20 @@ class NotificationButton {
   const NotificationButton({
     required this.id,
     required this.text,
+    required this.icon,
     this.textColor,
   })  : assert(id.length > 0),
-        assert(text.length > 0);
+        assert(text.length > 0),
+        assert(icon.length > 0);
 
   /// The button identifier.
   final String id;
 
   /// The text to display on the button.
   final String text;
+
+  /// The icon to display on the button.
+  final String icon;
 
   /// The button text color. (only work Android)
   final Color? textColor;
@@ -26,6 +31,7 @@ class NotificationButton {
     return {
       'id': id,
       'text': text,
+      'icon': icon,
       'textColorRgb': textColor?.toRgbString,
     };
   }
@@ -34,11 +40,13 @@ class NotificationButton {
   NotificationButton copyWith({
     String? id,
     String? text,
+    String? icon,
     Color? textColor,
   }) =>
       NotificationButton(
         id: id ?? this.id,
         text: text ?? this.text,
+        icon: icon ?? this.icon,
         textColor: textColor ?? this.textColor,
       );
 }

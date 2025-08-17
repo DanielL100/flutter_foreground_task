@@ -15,12 +15,21 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.pravera.flutter_foreground_task.FlutterForegroundTaskLifecycleListener
+import com.pravera.flutter_foreground_task.R
 import com.pravera.flutter_foreground_task.RequestCode
 import com.pravera.flutter_foreground_task.models.*
 import com.pravera.flutter_foreground_task.utils.ForegroundServiceUtils
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+
+import android.support.v4.media.session.MediaSessionCompat
+import androidx.media.app.NotificationCompat.MediaStyle
+
+
+
+
+
 
 /**
  * A service class for implementing foreground service.
@@ -340,14 +349,21 @@ class ForegroundService : Service() {
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val builder = Notification.Builder(this, notificationOptions.channelId)
+            val mediaSession = MediaSessionCompat(this, "tag")
+            val style = androidx.media.app.NotificationCompat.MediaStyle()
+                .setMediaSession(mediaSession.sessionToken)
+                .setShowActionsInCompactView(0, 1, 2) // indices of actions to show in compact view
+
+
+            val builder = NotificationCompat.Builder(this, notificationOptions.channelId)
             builder.setOngoing(true)
             builder.setShowWhen(notificationOptions.showWhen)
             builder.setSmallIcon(iconResId)
             builder.setContentIntent(contentIntent)
             builder.setContentTitle(notificationContent.title)
             builder.setContentText(notificationContent.text)
-            builder.style = Notification.BigTextStyle()
+            //builder.style = Notification.BigTextStyle()
+            builder.setStyle(style)
             builder.setVisibility(notificationOptions.visibility)
             builder.setOnlyAlertOnce(notificationOptions.onlyAlertOnce)
             if (iconBackgroundColor != null) {
@@ -361,12 +377,18 @@ class ForegroundService : Service() {
             }
 
             val actions = buildNotificationActions(currButtons, needsRebuildButtons)
+            android.util.Log.d(TAG, "Buttonss: createNotification: Got here")
             for (action in actions) {
                 builder.addAction(action)
             }
 
             return builder.build()
         } else {
+            val mediaSession = MediaSessionCompat(this, "tag")
+            val style = androidx.media.app.NotificationCompat.MediaStyle()
+                .setMediaSession(mediaSession.sessionToken)
+                .setShowActionsInCompactView(0, 1, 2)
+
             val builder = NotificationCompat.Builder(this, notificationOptions.channelId)
             builder.setOngoing(true)
             builder.setShowWhen(notificationOptions.showWhen)
@@ -374,7 +396,8 @@ class ForegroundService : Service() {
             builder.setContentIntent(contentIntent)
             builder.setContentTitle(notificationContent.title)
             builder.setContentText(notificationContent.text)
-            builder.setStyle(NotificationCompat.BigTextStyle().bigText(notificationContent.text))
+            //builder.setStyle(NotificationCompat.BigTextStyle().bigText(notificationContent.text))
+            builder.setStyle(style)
             builder.setVisibility(notificationOptions.visibility)
             builder.setOnlyAlertOnce(notificationOptions.onlyAlertOnce)
             if (iconBackgroundColor != null) {
@@ -389,6 +412,7 @@ class ForegroundService : Service() {
             builder.priority = notificationOptions.priority
 
             val actions = buildNotificationCompatActions(currButtons, needsRebuildButtons)
+            android.util.Log.d(TAG, "Buttonss: createNotification: Got here 2")
             for (action in actions) {
                 builder.addAction(action)
             }
@@ -549,9 +573,11 @@ class ForegroundService : Service() {
     private fun buildNotificationActions(
         buttons: List<NotificationButton>,
         needsRebuild: Boolean = false
-    ): List<Notification.Action> {
-        val actions = mutableListOf<Notification.Action>()
+    ): List<NotificationCompat.Action> {
+        android.util.Log.d(TAG, "Buttonss: buildNotificationActions: Inside: ")
+        val actions = mutableListOf<NotificationCompat.Action>()
         for (i in buttons.indices) {
+            android.util.Log.d(TAG, "Buttonss: buildNotificationActions: " + buttons[i] + " $$$ " + buttons.indices + " $$$ " + buttons + " $$$ ")
             val intent = Intent(ACTION_NOTIFICATION_BUTTON_PRESSED).apply {
                 setPackage(packageName)
                 putExtra(INTENT_DATA_NAME, buttons[i].id)
@@ -562,12 +588,14 @@ class ForegroundService : Service() {
             }
             val textColor = buttons[i].textColorRgb?.let(::getRgbColor)
             val text = getTextSpan(buttons[i].text, textColor)
+            val ic = applicationContext.resources.getIdentifier(buttons[i].icon, "drawable", applicationContext.packageName) //getTextSpan(buttons[i].icon, textColor)
+            android.util.Log.d(TAG, "Are they the same: ${buttons[i].icon == "ic_play"} Drawable ID: $ic where og name is: ${buttons[i].icon.toString().trim().length}")
             val pendingIntent =
                 PendingIntent.getBroadcast(this, i + 1, intent, flags)
             val action = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                Notification.Action.Builder(null, text, pendingIntent).build()
+                NotificationCompat.Action(ic, text, pendingIntent)
             } else {
-                Notification.Action.Builder(0, text, pendingIntent).build()
+                NotificationCompat.Action(ic, text, pendingIntent)
             }
             actions.add(action)
         }
@@ -579,6 +607,7 @@ class ForegroundService : Service() {
         buttons: List<NotificationButton>,
         needsRebuild: Boolean = false
     ): List<NotificationCompat.Action> {
+        android.util.Log.d(TAG, "Buttonss: buildNotificationActions: Inside 2: ")
         val actions = mutableListOf<NotificationCompat.Action>()
         for (i in buttons.indices) {
             val intent = Intent(ACTION_NOTIFICATION_BUTTON_PRESSED).apply {
@@ -591,9 +620,10 @@ class ForegroundService : Service() {
             }
             val textColor = buttons[i].textColorRgb?.let(::getRgbColor)
             val text = getTextSpan(buttons[i].text, textColor)
+            val ic = applicationContext.resources.getIdentifier(buttons[i].icon, "drawable", applicationContext.packageName)
             val pendingIntent =
                 PendingIntent.getBroadcast(this, i + 1, intent, flags)
-            val action = NotificationCompat.Action.Builder(0, text, pendingIntent).build()
+            val action = NotificationCompat.Action(ic, text, pendingIntent)
             actions.add(action)
         }
 
