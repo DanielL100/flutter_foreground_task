@@ -66,6 +66,27 @@ class MyTaskHandler extends TaskHandler {
   @override
   void onNotificationButtonPressed(String id) {
     print('onNotificationButtonPressed: $id');
+    if(id == "play") {
+      FlutterForegroundTask.updateService(
+          notificationTitle: 'Hello MyTaskHandler :)',
+          notificationText: 'count: $_count',
+          notificationButtons: [
+            NotificationButton(id: 'prev', text: 'prev', icon: "ic_prev"),
+            NotificationButton(id: 'pause', text: 'pause', icon: "ic_pause"),
+            NotificationButton(id: 'next', text: 'next', icon: "ic_next"),
+          ]
+      );
+    } else if (id == "pause") {
+      FlutterForegroundTask.updateService(
+          notificationTitle: 'Hello MyTaskHandler :)',
+          notificationText: 'count: $_count',
+          notificationButtons: [
+            NotificationButton(id: 'prev', text: 'prev', icon: "ic_prev"),
+            NotificationButton(id: 'play', text: 'play', icon: "ic_play"),
+            NotificationButton(id: 'next', text: 'next', icon: "ic_next"),
+          ]
+      );
+    }
   }
 
   // Called when the notification itself is pressed.
@@ -177,9 +198,9 @@ class _ExamplePageState extends State<ExamplePage> {
         notificationText: 'Tap to return to the app',
         notificationIcon: null,
         notificationButtons: [
-          NotificationButton(id: 'prev', text: 'prev', icon: "ic_prev"),
-          NotificationButton(id: 'play', text: 'play', icon: "ic_play"),
-          NotificationButton(id: 'next', text: 'next', icon: "ic_next"),
+            NotificationButton(id: 'prev', text: 'prev', icon: "ic_prev"),
+            NotificationButton(id: 'play', text: 'play', icon: "ic_play"),
+            NotificationButton(id: 'next', text: 'next', icon: "ic_next"),
         ],
         notificationInitialRoute: '/second',
         callback: startCallback,

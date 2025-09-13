@@ -377,7 +377,7 @@ class ForegroundService : Service() {
             }
 
             val actions = buildNotificationActions(currButtons, needsRebuildButtons)
-            android.util.Log.d(TAG, "Buttonss: createNotification: Got here")
+            //android.util.Log.d(TAG, "Buttonss: createNotification: Got here")
             for (action in actions) {
                 builder.addAction(action)
             }
@@ -412,7 +412,7 @@ class ForegroundService : Service() {
             builder.priority = notificationOptions.priority
 
             val actions = buildNotificationCompatActions(currButtons, needsRebuildButtons)
-            android.util.Log.d(TAG, "Buttonss: createNotification: Got here 2")
+            //android.util.Log.d(TAG, "Buttonss: createNotification: Got here 2")
             for (action in actions) {
                 builder.addAction(action)
             }
@@ -574,10 +574,10 @@ class ForegroundService : Service() {
         buttons: List<NotificationButton>,
         needsRebuild: Boolean = false
     ): List<NotificationCompat.Action> {
-        android.util.Log.d(TAG, "Buttonss: buildNotificationActions: Inside: ")
+        //android.util.Log.d(TAG, "Buttonss: buildNotificationActions: Inside: ")
         val actions = mutableListOf<NotificationCompat.Action>()
         for (i in buttons.indices) {
-            android.util.Log.d(TAG, "Buttonss: buildNotificationActions: " + buttons[i] + " $$$ " + buttons.indices + " $$$ " + buttons + " $$$ ")
+            //android.util.Log.d(TAG, "Buttonss: buildNotificationActions: " + buttons[i] + " $$$ " + buttons.indices + " $$$ " + buttons + " $$$ ")
             val intent = Intent(ACTION_NOTIFICATION_BUTTON_PRESSED).apply {
                 setPackage(packageName)
                 putExtra(INTENT_DATA_NAME, buttons[i].id)
@@ -588,8 +588,20 @@ class ForegroundService : Service() {
             }
             val textColor = buttons[i].textColorRgb?.let(::getRgbColor)
             val text = getTextSpan(buttons[i].text, textColor)
-            val ic = applicationContext.resources.getIdentifier(buttons[i].icon, "drawable", applicationContext.packageName) //getTextSpan(buttons[i].icon, textColor)
-            android.util.Log.d(TAG, "Are they the same: ${buttons[i].icon == "ic_play"} Drawable ID: $ic where og name is: ${buttons[i].icon.toString().trim().length}")
+
+//            val packageManager = applicationContext.packageManager
+//            val packageName = applicationContext.packageName
+//            android.util.Log.d(TAG, "buildNotificationActions: package name: $packageName")
+//            val appResource = packageManager.getResourcesForApplication(packageName)
+//            android.util.Log.d(TAG, "buildNotificationActions: app res: $appResource")
+//            val ic = appResource.getIdentifier(buttons[i].icon, "drawable", packageName) //getTextSpan(buttons[i].icon, textColor)
+            //android.util.Log.d(TAG, "buildNotificationActions: cont: $applicationContext, res: ${applicationContext.resources}, name: ${applicationContext.packageName}")
+            val ic = applicationContext.resources.getIdentifier(buttons[i].icon.toString().trim(), "drawable", applicationContext.packageName) //getTextSpan(buttons[i].icon, textColor)
+            //android.util.Log.d(TAG, "'${buttons[i].icon.toString().trim()}' Are they the same: ${buttons[i].icon == "ic_play"} Drawable ID: $ic where og name is: ${buttons[i].icon.toString().trim().length}")
+            //android.util.Log.d(TAG, "hex of icon: ${buttons[i].icon.toByteArray(Charsets.UTF_8)?.joinToString(" ") { "%02x".format(it) }}")
+            //android.util.Log.d(TAG, "hex of string: ${"ic_prev".toByteArray(Charsets.UTF_8)?.joinToString(" ") { "%02x".format(it) }}")
+            //android.util.Log.d(TAG, "hex of string: ${"ic_play".toByteArray(Charsets.UTF_8)?.joinToString(" ") { "%02x".format(it) }}")
+            //android.util.Log.d(TAG, "hex of string: ${"ic_next".toByteArray(Charsets.UTF_8)?.joinToString(" ") { "%02x".format(it) }}")
             val pendingIntent =
                 PendingIntent.getBroadcast(this, i + 1, intent, flags)
             val action = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -607,7 +619,7 @@ class ForegroundService : Service() {
         buttons: List<NotificationButton>,
         needsRebuild: Boolean = false
     ): List<NotificationCompat.Action> {
-        android.util.Log.d(TAG, "Buttonss: buildNotificationActions: Inside 2: ")
+        //android.util.Log.d(TAG, "Buttonss: buildNotificationActions: Inside 2: ")
         val actions = mutableListOf<NotificationCompat.Action>()
         for (i in buttons.indices) {
             val intent = Intent(ACTION_NOTIFICATION_BUTTON_PRESSED).apply {
